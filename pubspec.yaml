@@ -60,7 +60,7 @@ flutter:
 
   # Declaración estricta de Assets
   assets:
-    - assets/images/
+    - assets/images/arroz.jpg
 
   # Declaración de Fuentes Personalizadas
   fonts:

@@ -54,7 +54,7 @@ class _HomeViewState extends State<HomeView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              '¡Bienvenido a la calculadora!!',
+              'Calculadora de alimentos',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
