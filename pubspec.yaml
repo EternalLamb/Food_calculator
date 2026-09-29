@@ -60,15 +60,14 @@ flutter:
 
   # Declaración estricta de Assets
   assets:
-    - assets/images/wood.jpg
-    - assets/icons/BluePill.png
-    - assets/icons/BluePikmin.png
+    - assets/images/
+
   # Declaración de Fuentes Personalizadas
   fonts:
-    - family: Matcha_Mint
+    - family:
 
       fonts:
-      - asset: assets/fonts/Matcha_Mint.ttf
+      - asset: assets/fonts/
         weight: 700
 
 
