@@ -3,8 +3,9 @@ class ProductModel {
   final String name;
   final double price;
   final String category;
-  final String imagePath; // Ruta local en assets/images/
+  final String imagePath;
   final String yieldDescription;
+  int quantity;
 
   ProductModel({
     required this.id,
@@ -13,7 +14,29 @@ class ProductModel {
     required this.category,
     required this.imagePath,
     required this.yieldDescription,
+    this.quantity = 0,
   });
+
+  // 👇 ESTE ES EL MÉTODOS QUE FALTA PARA RESOLVER EL ERROR DE HOME.DART
+  ProductModel copyWith({
+    String? id,
+    String? name,
+    double? price,
+    String? category,
+    String? imagePath,
+    String? yieldDescription,
+    int? quantity,
+  }) {
+    return ProductModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      price: price ?? this.price,
+      category: category ?? this.category,
+      imagePath: imagePath ?? this.imagePath,
+      yieldDescription: yieldDescription ?? this.yieldDescription,
+      quantity: quantity ?? this.quantity,
+    );
+  }
 }
 
 final List<ProductModel> mockProducts = [
@@ -23,7 +46,7 @@ final List<ProductModel> mockProducts = [
     name: 'Arroz Grado 1 (1 kg)',
     price: 1350,
     category: 'Abarrotes',
-    imagePath: 'assets/images/arroz.jpg',
+    imagePath: 'assets/images/arroz.png',
     yieldDescription: 'Rinde aproximadamente 10 a 12 porciones de almuerzo.',
   ),
   ProductModel(

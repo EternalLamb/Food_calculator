@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/product.dart';
-import '../views/details.dart';
+import 'details.dart';
 
-class ProductListView extends StatelessWidget {
+class ProductListView extends StatefulWidget {
   final List<ProductModel> products;
   final double sueldo;
 
@@ -14,46 +14,125 @@ class ProductListView extends StatelessWidget {
   });
 
   @override
+  State<ProductListView> createState() => _ProductListViewState();
+}
+
+class _ProductListViewState extends State<ProductListView> {
+  double get totalGastado {
+    return widget.products.fold(
+      0.0,
+      (sum, item) => sum + (item.price * item.quantity),
+    );
+  }
+
+  double get saldoRestante {
+    return widget.sueldo - totalGastado;
+  }
+
+  void _addToCart(ProductModel product) {
+    if (saldoRestante < product.price) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('¡Saldo insuficiente para añadir este producto!'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      product.quantity++;
+    });
+  }
+
+  void _removeFromCart(ProductModel product) {
+    if (product.quantity > 0) {
+      setState(() {
+        product.quantity--;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Lista de Alimentos')),
+      appBar: AppBar(title: const Text('Mi Canasta de Alimentos')),
       body: Column(
         children: [
-          // Banner de sueldo ingresado
+          // Banner Resumen de Presupuesto
           Container(
             padding: const EdgeInsets.all(16),
-            color: Theme.of(context).colorScheme.primaryContainer,
-            width: double.infinity,
-            child: Text(
-              'Sueldo disponible: \$${sueldo.toStringAsFixed(0)} CLP',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+            color: saldoRestante < 0
+                ? Colors.red.shade100
+                : Theme.of(context).colorScheme.primaryContainer,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: [
+                    const Text('Sueldo', style: TextStyle(fontSize: 12)),
+                    Text(
+                      '\$${widget.sueldo.toStringAsFixed(0)}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Text('Total Canasta', style: TextStyle(fontSize: 12)),
+                    Text(
+                      '\$${totalGastado.toStringAsFixed(0)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Text('Restante', style: TextStyle(fontSize: 12)),
+                    Text(
+                      '\$${saldoRestante.toStringAsFixed(0)}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: saldoRestante < 0
+                            ? Colors.red
+                            : Colors.green[800],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
 
-          // Listado de productos con imagen local
+          // Lista de alimentos editable
           Expanded(
             child: ListView.builder(
-              itemCount: products.length,
+              itemCount: widget.products.length,
               itemBuilder: (context, index) {
-                final product = products[index];
+                final product = widget.products[index];
+                final bool enCarrito = product.quantity > 0;
+
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 10,
-                    vertical: 6,
+                    vertical: 5,
                   ),
+                  color: enCarrito ? Colors.green.shade50 : null,
                   child: ListTile(
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.asset(
                         product.imagePath,
-                        width: 55,
-                        height: 55,
+                        width: 50,
+                        height: 50,
                         fit: BoxFit.cover,
-                        // Muestra un ícono por defecto si la imagen no existe aún en la carpeta assets/images/
                         errorBuilder: (context, error, stackTrace) => Container(
-                          width: 55,
-                          height: 55,
+                          width: 50,
+                          height: 50,
                           color: Colors.grey[300],
                           child: const Icon(Icons.fastfood, color: Colors.grey),
                         ),
@@ -61,20 +140,51 @@ class ProductListView extends StatelessWidget {
                     ),
                     title: Text(
                       product.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: enCarrito ? Colors.green[900] : Colors.black,
+                      ),
                     ),
                     subtitle: Text(
-                      '${product.category}\n\$${product.price.toStringAsFixed(0)} CLP',
+                      '${product.category} • \$${product.price.toStringAsFixed(0)} CLP',
                     ),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      Navigator.push(
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (enCarrito) ...[
+                          IconButton(
+                            icon: const Icon(
+                              Icons.remove_circle_outline,
+                              color: Colors.red,
+                            ),
+                            onPressed: () => _removeFromCart(product),
+                          ),
+                          Text(
+                            '${product.quantity}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                        IconButton(
+                          icon: const Icon(
+                            Icons.add_circle_outline,
+                            color: Colors.green,
+                          ),
+                          onPressed: () => _addToCart(product),
+                        ),
+                      ],
+                    ),
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
                               ProductDetailView(product: product),
                         ),
                       );
+                      setState(() {});
                     },
                   ),
                 );
