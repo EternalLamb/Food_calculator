@@ -61,6 +61,32 @@ flutter:
   # Declaración estricta de Assets
   assets:
     - assets/images/arroz.jpg
+    - assets/images/fideos.jpg
+    - assets/images/atun.jpg
+    - assets/images/papas.jpg
+    - assets/images/platanos.jpg
+    - assets/images/manzana.jpg
+    - assets/images/cebollas.jpg
+    - assets/images/tomates.jpg
+    - assets/images/pan_molde.jpg
+    - assets/images/pan.jpg
+    - assets/images/te.jpg
+    - assets/images/detergente.jpg
+    - assets/images/lavaloza.jpg
+    - assets/images/pollo.jpg
+    - assets/images/lentejas.jpg
+    - assets/images/avena.jpg
+    - assets/images/aceite.jpg
+    - assets/images/sal.jpg
+    - assets/images/salsa_tomate.jpg
+    - assets/images/huevos.jpg
+    - assets/images/carne_molida.jpg
+    - assets/images/vienesa.jpg
+    - assets/images/leche.jpg
+    - assets/images/queso.jpg
+    - assets/images/pan.jpg
+    - assets/images/yogurt.jpg
+
 
   # Declaración de Fuentes Personalizadas
   fonts:

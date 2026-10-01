@@ -17,7 +17,6 @@ class ProductModel {
     this.quantity = 0,
   });
 
-  // 👇 ESTE ES EL MÉTODOS QUE FALTA PARA RESOLVER EL ERROR DE HOME.DART
   ProductModel copyWith({
     String? id,
     String? name,
@@ -46,7 +45,7 @@ final List<ProductModel> mockProducts = [
     name: 'Arroz Grado 1 (1 kg)',
     price: 1350,
     category: 'Abarrotes',
-    imagePath: 'assets/images/arroz.png',
+    imagePath: 'assets/images/arroz.jpg',
     yieldDescription: 'Rinde aproximadamente 10 a 12 porciones de almuerzo.',
   ),
   ProductModel(
@@ -54,7 +53,7 @@ final List<ProductModel> mockProducts = [
     name: 'Fideos Tallarines (500 g)',
     price: 990,
     category: 'Abarrotes',
-    imagePath: 'assets/images/fideos.png',
+    imagePath: 'assets/images/fideos.jpg',
     yieldDescription: 'Rinde 4 a 5 porciones abundantes para la semana.',
   ),
   ProductModel(
@@ -62,7 +61,7 @@ final List<ProductModel> mockProducts = [
     name: 'Lentejas (1 kg)',
     price: 1890,
     category: 'Abarrotes',
-    imagePath: 'assets/images/lentejas.png',
+    imagePath: 'assets/images/lentejas.jpg',
     yieldDescription: 'Legumbre nutritiva que rinde 8 a 10 porciones.',
   ),
   ProductModel(
@@ -70,7 +69,7 @@ final List<ProductModel> mockProducts = [
     name: 'Avena Soplada (500 g)',
     price: 1400,
     category: 'Abarrotes',
-    imagePath: 'assets/images/avena.png',
+    imagePath: 'assets/images/avena.jpg',
     yieldDescription: 'Desayuno rápido y saciante para 2 semanas.',
   ),
   ProductModel(
@@ -78,7 +77,7 @@ final List<ProductModel> mockProducts = [
     name: 'Aceite Vegetal (1 Litro)',
     price: 2200,
     category: 'Abarrotes',
-    imagePath: 'assets/images/aceite.png',
+    imagePath: 'assets/images/aceite.jpg',
     yieldDescription: 'Insumo básico de cocina que dura más de un mes.',
   ),
   ProductModel(
@@ -86,7 +85,7 @@ final List<ProductModel> mockProducts = [
     name: 'Sal de Mesa (1 kg)',
     price: 550,
     category: 'Abarrotes',
-    imagePath: 'assets/images/sal.png',
+    imagePath: 'assets/images/sal.jpg',
     yieldDescription: 'Sazonador básico con duración para varios meses.',
   ),
   ProductModel(
@@ -94,7 +93,7 @@ final List<ProductModel> mockProducts = [
     name: 'Salsa de Tomate (200 g)',
     price: 650,
     category: 'Abarrotes',
-    imagePath: 'assets/images/salsa_tomate.png',
+    imagePath: 'assets/images/salsa_tomate.jpg',
     yieldDescription: 'Acompañamiento básico para 2 a 3 comidas con pastas.',
   ),
 
@@ -104,7 +103,7 @@ final List<ProductModel> mockProducts = [
     name: 'Bandeja Huevos (12 un)',
     price: 3400,
     category: 'Proteínas',
-    imagePath: 'assets/images/huevos.png',
+    imagePath: 'assets/images/huevos.jpg',
     yieldDescription: 'Excelente fuente de proteína para desayunos y cenas.',
   ),
   ProductModel(
@@ -112,7 +111,7 @@ final List<ProductModel> mockProducts = [
     name: 'Pechuga de Pollo (1 kg)',
     price: 4990,
     category: 'Proteínas',
-    imagePath: 'assets/images/pollo.png',
+    imagePath: 'assets/images/pollo.jpg',
     yieldDescription:
         'Proteína magra congelable para 5 a 6 platos principales.',
   ),
@@ -121,7 +120,7 @@ final List<ProductModel> mockProducts = [
     name: 'Carne Molida 10% (500 g)',
     price: 3890,
     category: 'Proteínas',
-    imagePath: 'assets/images/carne_molida.png',
+    imagePath: 'assets/images/carne_molida.jpg',
     yieldDescription: 'Versátil para salsas boloñesa, hamburguesas o pino.',
   ),
   ProductModel(
@@ -129,7 +128,7 @@ final List<ProductModel> mockProducts = [
     name: 'Atún en Agua (160 g)',
     price: 1200,
     category: 'Proteínas',
-    imagePath: 'assets/images/atun.png',
+    imagePath: 'assets/images/atun.jpg',
     yieldDescription: 'Proteína rápida sin necesidad de cocción.',
   ),
   ProductModel(
@@ -137,7 +136,7 @@ final List<ProductModel> mockProducts = [
     name: 'Vienesas Tradicionales (5 un)',
     price: 1100,
     category: 'Proteínas',
-    imagePath: 'assets/images/vienesas.png',
+    imagePath: 'assets/images/vienesa.jpg',
     yieldDescription: 'Comida rápida de preparar para días ajustados.',
   ),
 
@@ -147,7 +146,7 @@ final List<ProductModel> mockProducts = [
     name: 'Leche Entera (1 Litro)',
     price: 1050,
     category: 'Lácteos',
-    imagePath: 'assets/images/leche.png',
+    imagePath: 'assets/images/leche.jpg',
     yieldDescription: 'Rinde alrededor de 4 vasos para cafés, batidos o avena.',
   ),
   ProductModel(
@@ -155,7 +154,7 @@ final List<ProductModel> mockProducts = [
     name: 'Yogurt Batido (120 g)',
     price: 380,
     category: 'Lácteos',
-    imagePath: 'assets/images/yogurt.png',
+    imagePath: 'assets/images/yogurt.jpg',
     yieldDescription: 'Colación ligera o postre para la jornada universitaria.',
   ),
   ProductModel(
@@ -163,7 +162,7 @@ final List<ProductModel> mockProducts = [
     name: 'Queso Laminado (250 g)',
     price: 2490,
     category: 'Lácteos',
-    imagePath: 'assets/images/queso.png',
+    imagePath: 'assets/images/queso.jpg',
     yieldDescription: 'Rinde aproximadamente 10 a 12 láminas para sándwiches.',
   ),
 
@@ -173,7 +172,7 @@ final List<ProductModel> mockProducts = [
     name: 'Malla de Papas (2 kg)',
     price: 2500,
     category: 'Verduras',
-    imagePath: 'assets/images/papas.png',
+    imagePath: 'assets/images/papas.jpg',
     yieldDescription:
         'Carbohidrato base para acompañamientos de 2 a 3 semanas.',
   ),
@@ -182,7 +181,7 @@ final List<ProductModel> mockProducts = [
     name: 'Kilo de Plátanos (1 kg)',
     price: 1390,
     category: 'Frutas',
-    imagePath: 'assets/images/platanos.png',
+    imagePath: 'assets/images/platanos.jpg',
     yieldDescription:
         'Snack saludable para colaciones entre clases (5-6 unidades).',
   ),
@@ -191,7 +190,7 @@ final List<ProductModel> mockProducts = [
     name: 'Kilo de Manzanas (1 kg)',
     price: 1290,
     category: 'Frutas',
-    imagePath: 'assets/images/manzanas.png',
+    imagePath: 'assets/images/manzana.jpg',
     yieldDescription:
         'Fruta fresca de larga duración (approx. 5 a 6 manzanas).',
   ),
@@ -200,7 +199,7 @@ final List<ProductModel> mockProducts = [
     name: 'Bolsa de Cebollas (1 kg)',
     price: 1200,
     category: 'Verduras',
-    imagePath: 'assets/images/cebollas.png',
+    imagePath: 'assets/images/cebollas.jpg',
     yieldDescription:
         'Base esencial para aderezos de sofritos en múltiples recetas.',
   ),
@@ -209,7 +208,7 @@ final List<ProductModel> mockProducts = [
     name: 'Kilo de Tomates (1 kg)',
     price: 1690,
     category: 'Verduras',
-    imagePath: 'assets/images/tomates.png',
+    imagePath: 'assets/images/tomates.jpg',
     yieldDescription: 'Ideal para ensaladas diarias durante la semana.',
   ),
 
@@ -219,7 +218,7 @@ final List<ProductModel> mockProducts = [
     name: 'Pan Hallulla / Marraqueta (1 kg)',
     price: 2100,
     category: 'Panadería',
-    imagePath: 'assets/images/pan_fresco.png',
+    imagePath: 'assets/images/pan.jpg',
     yieldDescription:
         'Rinde aproximadamente 10 a 12 panes para desayunos y onces.',
   ),
@@ -228,7 +227,7 @@ final List<ProductModel> mockProducts = [
     name: 'Pan de Molde Familiar',
     price: 2390,
     category: 'Panadería',
-    imagePath: 'assets/images/pan_molde.png',
+    imagePath: 'assets/images/pan_molde.jpg',
     yieldDescription: 'Ideal para preparar sándwiches rápidos para llevar.',
   ),
   ProductModel(
@@ -236,7 +235,7 @@ final List<ProductModel> mockProducts = [
     name: 'Té Cajas (100 bolsitas)',
     price: 2990,
     category: 'Abarrotes',
-    imagePath: 'assets/images/te.png',
+    imagePath: 'assets/images/te.jpg',
     yieldDescription: 'Bebestible caliente que rinde para más de un mes.',
   ),
   ProductModel(
@@ -244,15 +243,15 @@ final List<ProductModel> mockProducts = [
     name: 'Detergente Líquido (1 Litro)',
     price: 2990,
     category: 'Limpieza',
-    imagePath: 'assets/images/detergente.png',
+    imagePath: 'assets/images/detergente.jpg',
     yieldDescription: 'Rinde aproximadamente para 10 a 12 lavados de ropa.',
   ),
   ProductModel(
     id: '25',
-    name: 'Lavatristes / Lavaloza (750 ml)',
+    name: 'Lavaloza (750 ml)',
     price: 1490,
     category: 'Limpieza',
-    imagePath: 'assets/images/lavaloza.png',
+    imagePath: 'assets/images/lavaloza.jpg',
     yieldDescription: 'Limpiador concentrado para la loza de varias semanas.',
   ),
 ];
