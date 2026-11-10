@@ -17,6 +17,31 @@ class ProductModel {
     this.quantity = 0,
   });
 
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'price': price,
+      'category': category,
+      'imagePath': imagePath,
+      'yieldDescription': yieldDescription,
+      'quantity': quantity,
+    };
+  }
+
+  factory ProductModel.fromMap(Map<String, Object?> map) {
+    return ProductModel(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      price: (map['price'] as num).toDouble(),
+      category: map['category'] as String,
+      imagePath: map['imagePath'] as String,
+      yieldDescription: map['yieldDescription'] as String,
+      quantity: map['quantity'] as int,
+    );
+  }
+  // ------------------------
+
   ProductModel copyWith({
     String? id,
     String? name,

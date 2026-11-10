@@ -4,17 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../models/product.dart';
+import '../data/database_helper.dart';
 import 'details.dart';
 
 class ProductListView extends StatefulWidget {
-  final List<ProductModel> products;
   final double sueldo;
 
-  const ProductListView({
-    super.key,
-    required this.products,
-    required this.sueldo,
-  });
+  const ProductListView({super.key, required this.sueldo});
 
   @override
   State<ProductListView> createState() => _ProductListViewState();
@@ -22,9 +18,36 @@ class ProductListView extends StatefulWidget {
 
 class _ProductListViewState extends State<ProductListView> {
   final ImagePicker _picker = ImagePicker();
+  List<ProductModel> _products = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarProductos();
+  }
+
+  // Método para obtener los productos desde SQLite
+  Future<void> _cargarProductos() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final data = await DatabaseHelper.instance.obtenerProductos();
+      setState(() {
+        _products = data.map((map) => ProductModel.fromMap(map)).toList();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   double get totalGastado {
-    return widget.products.fold(
+    return _products.fold(
       0.0,
       (sum, item) => sum + (item.price * item.quantity),
     );
@@ -184,7 +207,7 @@ class _ProductListViewState extends State<ProductListView> {
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         final String nombre = nameController.text.trim();
                         final double? precio = double.tryParse(
                           priceController.text,
@@ -202,28 +225,32 @@ class _ProductListViewState extends State<ProductListView> {
                           return;
                         }
 
-                        // Se crea el producto escanado o ingresado a mano
                         final nuevoProducto = ProductModel(
                           id: DateTime.now().millisecondsSinceEpoch.toString(),
                           name: nombre,
                           price: precio,
                           category: categoriaSeleccionada,
                           imagePath:
-                              imagenTomada?.path ?? 'assets/images/arroz.png',
+                              imagenTomada?.path ?? 'assets/images/arroz.jpg',
                           yieldDescription:
                               'Producto añadido manualmente por el usuario.',
+                          quantity: 0,
                         );
 
-                        setState(() {
-                          widget.products.insert(0, nuevoProducto);
-                        });
+                        // --- 1. GUARDAR EN LA BASE DE DATOS SQLite ---
+                        await DatabaseHelper.instance.insertarProducto(
+                          nuevoProducto,
+                        );
+
+                        // --- 2. RECARGAR LA LISTA DESDE LA BASE DE DATOS ---
+                        await _cargarProductos();
 
                         Navigator.pop(ctx);
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              '¡${nuevoProducto.name} guardado en el catálogo!',
+                              '¡${nuevoProducto.name} guardado en la base de datos!',
                             ),
                             backgroundColor: Colors.green[800],
                           ),
@@ -304,112 +331,126 @@ class _ProductListViewState extends State<ProductListView> {
             ),
           ),
 
-          // Lista de alimentos editable
+          // Lista de alimentos editable desde SQLite
           Expanded(
-            child: ListView.builder(
-              itemCount: widget.products.length,
-              itemBuilder: (context, index) {
-                final product = widget.products[index];
-                final bool enCarrito = product.quantity > 0;
-                final bool esRutaLocal =
-                    product.imagePath.startsWith('/') ||
-                    product.imagePath.startsWith('file:');
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _products.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No hay productos guardados.\nAgrega uno nuevo con el ícono superior.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _products.length,
+                    itemBuilder: (context, index) {
+                      final product = _products[index];
+                      final bool enCarrito = product.quantity > 0;
+                      final bool esRutaLocal =
+                          product.imagePath.startsWith('/') ||
+                          product.imagePath.startsWith('file:');
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  color: enCarrito ? Colors.green.shade50 : null,
-                  child: ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: esRutaLocal
-                          ? Image.file(
-                              File(product.imagePath),
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                    width: 50,
-                                    height: 50,
-                                    color: Colors.grey[300],
-                                    child: const Icon(
-                                      Icons.fastfood,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                            )
-                          : Image.asset(
-                              product.imagePath,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                    width: 50,
-                                    height: 50,
-                                    color: Colors.grey[300],
-                                    child: const Icon(
-                                      Icons.fastfood,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                            ),
-                    ),
-                    title: Text(
-                      product.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: enCarrito ? Colors.green[900] : Colors.black,
-                      ),
-                    ),
-                    subtitle: Text(
-                      '${product.category} • \$${product.price.toStringAsFixed(0)} CLP',
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (enCarrito) ...[
-                          IconButton(
-                            icon: const Icon(
-                              Icons.remove_circle_outline,
-                              color: Colors.red,
-                            ),
-                            onPressed: () => _removeFromCart(product),
-                          ),
-                          Text(
-                            '${product.quantity}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                        IconButton(
-                          icon: const Icon(
-                            Icons.add_circle_outline,
-                            color: Colors.green,
-                          ),
-                          onPressed: () => _addToCart(product),
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
                         ),
-                      ],
-                    ),
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ProductDetailView(product: product),
+                        color: enCarrito ? Colors.green.shade50 : null,
+                        child: ListTile(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: esRutaLocal
+                                ? Image.file(
+                                    File(product.imagePath),
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                              width: 50,
+                                              height: 50,
+                                              color: Colors.grey[300],
+                                              child: const Icon(
+                                                Icons.fastfood,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                  )
+                                : Image.asset(
+                                    product.imagePath,
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                              width: 50,
+                                              height: 50,
+                                              color: Colors.grey[300],
+                                              child: const Icon(
+                                                Icons.fastfood,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                  ),
+                          ),
+                          title: Text(
+                            product.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: enCarrito
+                                  ? Colors.green[900]
+                                  : Colors.black,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '${product.category}\n\$${product.price.toStringAsFixed(0)} CLP',
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (enCarrito) ...[
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.remove_circle_outline,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () => _removeFromCart(product),
+                                ),
+                                Text(
+                                  '${product.quantity}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.add_circle_outline,
+                                  color: Colors.green,
+                                ),
+                                onPressed: () => _addToCart(product),
+                              ),
+                            ],
+                          ),
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetailView(product: product),
+                              ),
+                            );
+                            setState(() {});
+                          },
                         ),
                       );
-                      setState(() {});
                     },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),
