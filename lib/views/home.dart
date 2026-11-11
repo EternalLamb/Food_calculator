@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/product.dart';
 import '../views/list.dart';
+import '../data/database_helper.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -13,7 +14,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final TextEditingController _sueldoController = TextEditingController();
 
-  void _generarCanasta({required bool autoRecomendar}) {
+  Future<void> _generarCanasta({required bool autoRecomendar}) async {
     final double? sueldo = double.tryParse(_sueldoController.text);
 
     if (sueldo == null || sueldo <= 0) {
@@ -26,14 +27,15 @@ class _HomeViewState extends State<HomeView> {
       return;
     }
 
-    List<ProductModel> productList = mockProducts
-        .map((p) => p.copyWith(quantity: 0))
+    final data = await DatabaseHelper.instance.obtenerProductos();
+    List<ProductModel> productList = data
+        .map((map) => ProductModel.fromMap(map))
         .toList();
 
     if (autoRecomendar) {
       _aplicarAlgoritmoCanastaInteligente(productList, sueldo);
     }
-
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => ProductListView(sueldo: sueldo)),
@@ -60,7 +62,7 @@ class _HomeViewState extends State<HomeView> {
       String categoria = entry.key;
       double presupuestoCategoria = entry.value;
 
-      //Se filtran los productos de la categoría ordenados por precio ascendente
+      // Se filtran los productos de la categoría ordenados por precio ascendente
       var productosCategoria =
           products.where((p) => p.category == categoria).toList()
             ..sort((a, b) => a.price.compareTo(b.price));

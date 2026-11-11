@@ -82,6 +82,20 @@ class _ProductListViewState extends State<ProductListView> {
     }
   }
 
+  // Método para eliminar un producto de la base de datos
+  Future<void> _eliminarProducto(String id, String nombre) async {
+    await DatabaseHelper.instance.eliminarProducto(id);
+    await _cargarProductos(); // Recarga la lista desde SQLite
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('¡$nombre eliminado de la base de datos!'),
+        backgroundColor: Colors.red[700],
+      ),
+    );
+  }
+
   Future<void> _mostrarModalAgregarProducto() async {
     final nameController = TextEditingController();
     final priceController = TextEditingController();
@@ -225,26 +239,27 @@ class _ProductListViewState extends State<ProductListView> {
                           return;
                         }
 
+                        // Si no toma foto, se guarda sin foto
                         final nuevoProducto = ProductModel(
                           id: DateTime.now().millisecondsSinceEpoch.toString(),
                           name: nombre,
                           price: precio,
                           category: categoriaSeleccionada,
-                          imagePath:
-                              imagenTomada?.path ?? 'assets/images/arroz.jpg',
+                          imagePath: imagenTomada?.path ?? '',
                           yieldDescription:
                               'Producto añadido manualmente por el usuario.',
                           quantity: 0,
                         );
 
-                        // --- 1. GUARDAR EN LA BASE DE DATOS SQLite ---
+                        // Guardar en la base de daatos
                         await DatabaseHelper.instance.insertarProducto(
                           nuevoProducto,
                         );
 
-                        // --- 2. RECARGAR LA LISTA DESDE LA BASE DE DATOS ---
+                        // Cargar de la base de datos
                         await _cargarProductos();
 
+                        if (!context.mounted) return;
                         Navigator.pop(ctx);
 
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -348,6 +363,7 @@ class _ProductListViewState extends State<ProductListView> {
                     itemBuilder: (context, index) {
                       final product = _products[index];
                       final bool enCarrito = product.quantity > 0;
+                      final bool tieneImagen = product.imagePath.isNotEmpty;
                       final bool esRutaLocal =
                           product.imagePath.startsWith('/') ||
                           product.imagePath.startsWith('file:');
@@ -361,40 +377,48 @@ class _ProductListViewState extends State<ProductListView> {
                         child: ListTile(
                           leading: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: esRutaLocal
-                                ? Image.file(
-                                    File(product.imagePath),
+                            child: tieneImagen
+                                ? (esRutaLocal
+                                      ? Image.file(
+                                          File(product.imagePath),
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (ctx, err, stack) =>
+                                              Container(
+                                                width: 50,
+                                                height: 50,
+                                                color: Colors.grey[300],
+                                                child: const Icon(
+                                                  Icons.fastfood,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                        )
+                                      : Image.asset(
+                                          product.imagePath,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (ctx, err, stack) =>
+                                              Container(
+                                                width: 50,
+                                                height: 50,
+                                                color: Colors.grey[300],
+                                                child: const Icon(
+                                                  Icons.fastfood,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                        ))
+                                : Container(
                                     width: 50,
                                     height: 50,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                              width: 50,
-                                              height: 50,
-                                              color: Colors.grey[300],
-                                              child: const Icon(
-                                                Icons.fastfood,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                  )
-                                : Image.asset(
-                                    product.imagePath,
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                              width: 50,
-                                              height: 50,
-                                              color: Colors.grey[300],
-                                              child: const Icon(
-                                                Icons.fastfood,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
+                                    color: Colors.grey[300],
+                                    child: const Icon(
+                                      Icons.fastfood,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                           ),
                           title: Text(
@@ -434,6 +458,16 @@ class _ProductListViewState extends State<ProductListView> {
                                   color: Colors.green,
                                 ),
                                 onPressed: () => _addToCart(product),
+                              ),
+                              // Botón para eliminar de la base de datos
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.red,
+                                ),
+                                tooltip: 'Eliminar de la BD',
+                                onPressed: () =>
+                                    _eliminarProducto(product.id, product.name),
                               ),
                             ],
                           ),
