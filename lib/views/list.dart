@@ -157,6 +157,8 @@ class _ProductListViewState extends State<ProductListView> {
                             });
                           }
                         } catch (e) {
+                          if (!context.mounted) return;
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('No se pudo abrir la cámara.'),
@@ -186,7 +188,7 @@ class _ProductListViewState extends State<ProductListView> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: categoriaSeleccionada,
+                      initialValue: categoriaSeleccionada,
                       decoration: const InputDecoration(
                         labelText: 'Categoría',
                         border: OutlineInputBorder(),

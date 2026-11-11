@@ -29,7 +29,7 @@ class PocSQLitePage extends StatefulWidget {
 class _PocSQLitePageState extends State<PocSQLitePage> {
   final _nombreController = TextEditingController();
   final _cantidadController = TextEditingController(text: '1');
-  ProductModel _productoSeleccionado = ProductModel(
+  final ProductModel _productoSeleccionado = ProductModel(
     id: '',
     name: '',
     price: 0,
