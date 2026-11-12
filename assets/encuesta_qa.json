@@ -1,0 +1,42 @@
+{
+  "cumplimiento_hu": [
+    {
+      "id": "HU-01",
+      "titulo": "¿Qué tan fácil fue completar el flujo principal de tu solución en la aplicación?",
+      "min": "1 estrella: Muy difícil",
+      "max": "5 estrellas: Rápido e intuitivo"
+    },
+    {
+      "id": "HU-02",
+      "titulo": "¿El servicio móvil o hardware integrado respondió adecuadamente?",
+      "min": "1 estrella: El servicio falló",
+      "max": "5 estrellas: Operó fluidamente"
+    },
+    {
+      "id": "HU-03",
+      "titulo": "¿El cálculo y gestión de tu presupuesto/canasta funcionó como esperabas?",
+      "min": "1 estrella: Erróneo",
+      "max": "5 estrellas: Exacto y útil"
+    }
+  ],
+  "usabilidad": [
+    {
+      "id": "UX-01",
+      "titulo": "¿Cómo calificas la navegación y claridad visual de la interfaz gráfica?",
+      "min": "1 estrella: Confusa",
+      "max": "5 estrellas: Clara y atractiva"
+    },
+    {
+      "id": "UX-02",
+      "titulo": "¿La información y configuraciones persistieron correctamente al reabrir la app?",
+      "min": "1 estrella: Se perdieron los datos",
+      "max": "5 estrellas: Todo intacto"
+    },
+    {
+      "id": "VAL-01",
+      "titulo": "¿El contenido y utilidad de la aplicación cumplieron con tus expectativas?",
+      "min": "1 estrella: No fue relevante",
+      "max": "5 estrellas: Superó expectativas"
+    }
+  ]
+}
