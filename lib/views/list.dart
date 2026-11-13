@@ -90,9 +90,200 @@ class _ProductListViewState extends State<ProductListView> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('¡$nombre eliminado de la base de datos!'),
+        content: Text('¡$nombre eliminado de la lista!'),
         backgroundColor: Colors.red[700],
       ),
+    );
+  }
+
+  // NUEVO: Método para mostrar el modal de edición de un producto existente
+  Future<void> _mostrarModalEditarProducto(ProductModel producto) async {
+    final nameController = TextEditingController(text: producto.name);
+    final priceController = TextEditingController(
+      text: producto.price.toStringAsFixed(0),
+    );
+    String categoriaSeleccionada = producto.category;
+    XFile? imagenActualizada;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext ctx) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'Editar Producto',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 15),
+
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.camera_alt),
+                      label: Text(
+                        imagenActualizada == null
+                            ? 'Cambiar Foto (Opcional)'
+                            : '¡Nueva Foto Seleccionada!',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: imagenActualizada == null
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.green[700],
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () async {
+                        try {
+                          final XFile? photo = await _picker.pickImage(
+                            source: ImageSource.camera,
+                          );
+                          if (photo != null) {
+                            setModalState(() {
+                              imagenActualizada = photo;
+                            });
+                          }
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('No se pudo abrir la cámara.'),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre del Producto',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Precio (CLP)',
+                        prefixText: '\$ ',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      value: categoriaSeleccionada,
+                      decoration: const InputDecoration(
+                        labelText: 'Categoría',
+                        border: OutlineInputBorder(),
+                      ),
+                      items:
+                          [
+                            'Abarrotes',
+                            'Proteínas',
+                            'Lácteos',
+                            'Frutas',
+                            'Verduras',
+                            'Panadería',
+                            'Limpieza',
+                          ].map((String cat) {
+                            return DropdownMenuItem(
+                              value: cat,
+                              child: Text(cat),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setModalState(() {
+                            categoriaSeleccionada = val;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[700],
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: () async {
+                        final String nombre = nameController.text.trim();
+                        final double? precio = double.tryParse(
+                          priceController.text,
+                        );
+
+                        if (nombre.isEmpty || precio == null || precio <= 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Por favor, ingresa datos válidos.',
+                              ),
+                              backgroundColor: Colors.orange,
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Construir el objeto actualizado manteniendo su ID original
+                        final productoActualizado = ProductModel(
+                          id: producto.id,
+                          name: nombre,
+                          price: precio,
+                          category: categoriaSeleccionada,
+                          imagePath:
+                              imagenActualizada?.path ?? producto.imagePath,
+                          yieldDescription: producto.yieldDescription,
+                          quantity: producto.quantity,
+                        );
+
+                        // Actualizar en la base de datos (requiere tener el método actualizarProducto en tu DatabaseHelper)
+                        await DatabaseHelper.instance.actualizarProducto(
+                          productoActualizado,
+                        );
+
+                        // Recargar la lista
+                        await _cargarProductos();
+
+                        if (!context.mounted) return;
+                        Navigator.pop(ctx);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '¡${productoActualizado.name} actualizado con éxito!',
+                            ),
+                            backgroundColor: Colors.blue[800],
+                          ),
+                        );
+                      },
+                      child: const Text('Guardar Cambios'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -241,7 +432,6 @@ class _ProductListViewState extends State<ProductListView> {
                           return;
                         }
 
-                        // Si no toma foto, se guarda sin foto
                         final nuevoProducto = ProductModel(
                           id: DateTime.now().millisecondsSinceEpoch.toString(),
                           name: nombre,
@@ -253,12 +443,10 @@ class _ProductListViewState extends State<ProductListView> {
                           quantity: 0,
                         );
 
-                        // Guardar en la base de daatos
                         await DatabaseHelper.instance.insertarProducto(
                           nuevoProducto,
                         );
 
-                        // Cargar de la base de datos
                         await _cargarProductos();
 
                         if (!context.mounted) return;
@@ -267,7 +455,7 @@ class _ProductListViewState extends State<ProductListView> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              '¡${nuevoProducto.name} guardado en la base de datos!',
+                              '¡${nuevoProducto.name} guardado en la lista!',
                             ),
                             backgroundColor: Colors.green[800],
                           ),
@@ -460,6 +648,16 @@ class _ProductListViewState extends State<ProductListView> {
                                   color: Colors.green,
                                 ),
                                 onPressed: () => _addToCart(product),
+                              ),
+                              // NUEVO: Botón para editar el producto
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit_outlined,
+                                  color: Colors.blue,
+                                ),
+                                tooltip: 'Editar Producto',
+                                onPressed: () =>
+                                    _mostrarModalEditarProducto(product),
                               ),
                               // Botón para eliminar de la base de datos
                               IconButton(

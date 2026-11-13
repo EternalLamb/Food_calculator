@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:label="lab_moviles"
+        android:label="Calculadora de Alimentos"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

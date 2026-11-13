@@ -2,15 +2,15 @@
   "cumplimiento_hu": [
     {
       "id": "HU-01",
-      "titulo": "¿Qué tan fácil fue completar el flujo principal de tu solución en la aplicación?",
-      "min": "1 estrella: Muy difícil",
-      "max": "5 estrellas: Rápido e intuitivo"
+      "titulo": "¿Cuanto te costó hacer una canasta para el mes con la aplicación?",
+      "min": "1 estrella: Mucho, no entendia nada de la app",
+      "max": "5 estrellas: Nada, fue muy fácil y rápido"
     },
     {
       "id": "HU-02",
-      "titulo": "¿El servicio móvil o hardware integrado respondió adecuadamente?",
-      "min": "1 estrella: El servicio falló",
-      "max": "5 estrellas: Operó fluidamente"
+      "titulo": "¿Las respuestas a tus acciones en la app fueron las esperadas?",
+      "min": "1 estrella: No, hacia cosas que no entendía",
+      "max": "5 estrellas: Sí, todo fue como esperaba"
     },
     {
       "id": "HU-03",
@@ -28,7 +28,7 @@
     },
     {
       "id": "UX-02",
-      "titulo": "¿La información y configuraciones persistieron correctamente al reabrir la app?",
+      "titulo": "¿Al abrir y cerrar la app, los productos agregados manualmente siguieron en la lista?",
       "min": "1 estrella: Se perdieron los datos",
       "max": "5 estrellas: Todo intacto"
     },
