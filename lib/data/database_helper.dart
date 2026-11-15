@@ -27,15 +27,14 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: (db, version) async {
         await _crearTabla(db);
         await _insertarProductosIniciales(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 3) {
+        if (oldVersion < 4) {
           await db.execute('DROP TABLE IF EXISTS productos');
-
           await _crearTabla(db);
           await _insertarProductosIniciales(db);
         }
@@ -286,7 +285,7 @@ class DatabaseHelper {
         'id': 'base_24',
         'name': 'Pechuga de Pollo Entera (1 kg)',
         'price': 5990.0,
-        'category': 'Carnes',
+        'category': 'Proteinas',
         'imagePath': 'assets/images/pechuga.jpg',
         'yieldDescription': 'Carne blanca versátil para distintos platos.',
         'quantity': 0,
@@ -295,7 +294,7 @@ class DatabaseHelper {
         'id': 'base_25',
         'name': 'Carne Molida Corriente (1 kg)',
         'price': 6990.0,
-        'category': 'Carnes',
+        'category': 'Proteinas',
         'imagePath': 'assets/images/carne_molida.jpg',
         'yieldDescription':
             'Ideal para hamburguesas caseras, pasteles o salsa boloñesa.',
@@ -305,7 +304,7 @@ class DatabaseHelper {
         'id': 'base_26',
         'name': 'Trutro Entero de Pollo (1 kg)',
         'price': 3990.0,
-        'category': 'Carnes',
+        'category': 'Proteinas',
         'imagePath': 'assets/images/truto.webp',
         'yieldDescription':
             'Económico y rendidor para almuerzos al horno o cazuela.',
