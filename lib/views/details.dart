@@ -23,7 +23,7 @@ class ProductDetailView extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'Precio: \$${product.price.toStringAsFixed(0)} CLP',
-              style: TextStyle(fontSize: 20, color: Colors.teal.shade800),
+              style: TextStyle(fontSize: 20, color: Colors.green.shade800),
             ),
             const SizedBox(height: 15),
             Text(

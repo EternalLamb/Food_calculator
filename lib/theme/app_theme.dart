@@ -5,10 +5,15 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.teal,
-        primary: Colors.teal,
+        seedColor: Colors.green,
+        primary: Colors.green[800],
       ),
-      appBarTheme: const AppBarTheme(centerTitle: true, elevation: 2),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.green[800],
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 2,
+      ),
     );
   }
 }
