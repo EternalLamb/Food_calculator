@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../models/product.dart';
-import '../repositories/product_repository.dart';
-import '../repositories/settings_repository.dart';
+import '../repository/product_repository.dart';
+import '../repository/settings_repository.dart';
 import '../services/camera_service.dart';
 
 class BasketViewModel extends ChangeNotifier {
@@ -208,4 +208,12 @@ class BasketViewModel extends ChangeNotifier {
   // ---------- Cámara ----------
   /// Devuelve la ruta o null si se canceló. Lanza [CameraException] si falla.
   Future<String?> takePhoto() => _camera.takePhoto();
+
+  String? validarProducto(String nombre, String precioTexto) {
+    final precio = double.tryParse(precioTexto);
+    if (nombre.trim().isEmpty || precio == null || precio <= 0) {
+      return 'Por favor, ingresa datos válidos.';
+    }
+    return null;
+  }
 }
