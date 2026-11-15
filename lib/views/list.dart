@@ -1,5 +1,9 @@
 import 'dart:io';
 
+import 'package:provider/provider.dart';
+
+import '../viewmodels/basket_viewmodel.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -8,9 +12,7 @@ import '../data/database_helper.dart';
 import 'details.dart';
 
 class ProductListView extends StatefulWidget {
-  final double sueldo;
-
-  const ProductListView({super.key, required this.sueldo});
+  const ProductListView({super.key});
 
   @override
   State<ProductListView> createState() => _ProductListViewState();
@@ -54,7 +56,7 @@ class _ProductListViewState extends State<ProductListView> {
   }
 
   double get saldoRestante {
-    return widget.sueldo - totalGastado;
+    return context.read<BasketViewModel>().sueldo - totalGastado;
   }
 
   void _addToCart(ProductModel product) {
@@ -501,7 +503,7 @@ class _ProductListViewState extends State<ProductListView> {
                   children: [
                     const Text('Sueldo', style: TextStyle(fontSize: 12)),
                     Text(
-                      '\$${widget.sueldo.toStringAsFixed(0)}',
+                      '\$${context.read<BasketViewModel>().sueldo.toStringAsFixed(0)}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../data/database_helper.dart';
-import '../models/product.dart';
-import 'list.dart';
+import '../viewmodels/basket_viewmodel.dart';
 import 'encuesta.dart';
+import 'list.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -14,6 +14,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final TextEditingController _sueldoController = TextEditingController();
+  bool _prefilled = false;
 
   @override
   void dispose() {
@@ -21,113 +22,37 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
-  void _aplicarAlgoritmoCanastaInteligente(
-    List<ProductModel> products,
-    double sueldo,
-  ) {
-    if (products.isEmpty) return;
+  Future<void> _generar({required bool auto}) async {
+    final vm = context.read<BasketViewModel>();
+    final error = await vm.generarCanasta(_sueldoController.text, auto: auto);
 
-    final Map<String, double> cuotasCategoria = {
-      'Abarrotes': sueldo * 0.30,
-      'Proteínas': sueldo * 0.25,
-      'Lácteos': sueldo * 0.10,
-      'Verduras': sueldo * 0.10,
-      'Frutas': sueldo * 0.10,
-      'Panadería': sueldo * 0.08,
-      'Limpieza': sueldo * 0.07,
-    };
+    if (!mounted) return;
 
-    double gastoTotal = 0.0;
-
-    for (var entry in cuotasCategoria.entries) {
-      String categoria = entry.key;
-      double presupuestoCategoria = entry.value;
-
-      var productosCategoria =
-          products.where((p) => p.category == categoria).toList()
-            ..sort((a, b) => a.price.compareTo(b.price));
-
-      if (productosCategoria.isEmpty) continue;
-
-      double gastoEnCategoria = 0.0;
-      bool pudoComprar = true;
-
-      while (pudoComprar) {
-        pudoComprar = false;
-        for (var product in productosCategoria) {
-          if (gastoEnCategoria + product.price <= presupuestoCategoria &&
-              gastoTotal + product.price <= sueldo) {
-            product.quantity++;
-            gastoEnCategoria += product.price;
-            gastoTotal += product.price;
-            pudoComprar = true;
-          }
-        }
-      }
-    }
-
-    var todosOrdenados = List<ProductModel>.from(products)
-      ..sort((a, b) => a.price.compareTo(b.price));
-
-    bool sigueAlcanzando = true;
-    while (sigueAlcanzando) {
-      sigueAlcanzando = false;
-      for (var product in todosOrdenados) {
-        if (gastoTotal + product.price <= sueldo) {
-          product.quantity++;
-          gastoTotal += product.price;
-          sigueAlcanzando = true;
-        }
-      }
-    }
-  }
-
-  Future<void> _generarCanasta({required bool autoRecomendar}) async {
-    final double? sueldo = double.tryParse(_sueldoController.text);
-
-    if (sueldo == null || sueldo <= 0) {
+    if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, ingresa un monto de sueldo válido.'),
-          backgroundColor: Colors.orange,
-        ),
+        SnackBar(content: Text(error), backgroundColor: Colors.orange),
       );
       return;
     }
-    final data = await DatabaseHelper.instance.obtenerProductos();
-    List<ProductModel> productList = data
-        .map((map) => ProductModel.fromMap(map))
-        .toList();
 
-    for (var p in productList) {
-      p.quantity = 0;
-      await DatabaseHelper.instance.insertarProducto(p);
-    }
-
-    if (autoRecomendar) {
-      _aplicarAlgoritmoCanastaInteligente(productList, sueldo);
-
-      for (var p in productList) {
-        if (p.quantity > 0) {
-          await DatabaseHelper.instance.insertarProducto(p);
-        }
-      }
-    }
-
-    if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProductListView(sueldo: sueldo)),
+      MaterialPageRoute(builder: (_) => const ProductListView()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<BasketViewModel>();
+
+    // Pre-llenar con el último sueldo persistido (solo una vez)
+    if (!_prefilled && vm.sueldo > 0) {
+      _sueldoController.text = vm.sueldo.toStringAsFixed(0);
+      _prefilled = true;
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Configurar Presupuesto'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Configurar Presupuesto')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Center(
@@ -172,7 +97,7 @@ class _HomeViewState extends State<HomeView> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  onPressed: () => _generarCanasta(autoRecomendar: true),
+                  onPressed: () => _generar(auto: true),
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
@@ -181,12 +106,11 @@ class _HomeViewState extends State<HomeView> {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  onPressed: () => _generarCanasta(autoRecomendar: false),
+                  onPressed: () => _generar(auto: false),
                 ),
                 const SizedBox(height: 30),
                 const Divider(),
                 const SizedBox(height: 10),
-
                 TextButton.icon(
                   icon: const Icon(Icons.rate_review, color: Colors.blueGrey),
                   label: const Text(
@@ -200,7 +124,7 @@ class _HomeViewState extends State<HomeView> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const EvaluacionQAView(),
+                        builder: (_) => const EvaluacionQAView(),
                       ),
                     );
                   },
