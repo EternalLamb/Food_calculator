@@ -31,9 +31,12 @@ dependencies:
 
   flutter:
     sdk: flutter
-  sqflite: ^2.3.0
   path: ^1.8.3
-  image_picker: ^1.0.7
+  shared_preferences: ^2.3.0
+  sqflite : ^2.3.3
+  path: ^1.9.0
+  image_picker: ^1.1.2
+  url_launcher: ^6.3.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -47,6 +50,9 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^3.0.0
+  flutter_native_splash: ^2.4.1
+
+
 
 flutter_launcher_icons:
   image_path: "assets/Icon/FoodCalculator.jpg"
