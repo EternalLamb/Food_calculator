@@ -1,4 +1,4 @@
-name: lab_moviles
+name: food_calculator
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -28,18 +28,30 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+
   flutter:
     sdk: flutter
-  image_picker: ^1.1.2
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  image_picker: ^1.0.7
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   logger: ^2.7.0
+  share_plus: ^13.3.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^3.0.0
+
+flutter_launcher_icons:
+  image_path: "assets/Icon/FoodCalculator.jpg"
+  android: true
+  ios: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -66,7 +78,7 @@ flutter:
     - assets/images/atun.jpg
     - assets/images/papas.jpg
     - assets/images/platanos.jpg
-    - assets/images/manzana.jpg
+    - assets/images/manzanas.jpg
     - assets/images/cebollas.jpg
     - assets/images/tomates.jpg
     - assets/images/pan_molde.jpg
@@ -87,7 +99,19 @@ flutter:
     - assets/images/queso.jpg
     - assets/images/pan.jpg
     - assets/images/yogurt.jpg
+    - assets/images/lechuga.webp
+    - assets/images/truto.webp
+    - assets/images/azucar.jpg
+    - assets/images/mantequilla.jpg
+    - assets/images/jurel.jpg
+    - assets/images/harina.jpg
+    - assets/images/zanahoria.jpg
+    - assets/images/pechuga.jpg
+    - assets/images/palta.webp
 
+    - assets/Icon/FoodCalculator.jpg
+
+    - assets/encuesta_qa.json
 
   # Declaración de Fuentes Personalizadas
   fonts:

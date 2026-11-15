@@ -1,0 +1,42 @@
+{
+  "cumplimiento_hu": [
+    {
+      "id": "HU-01",
+      "titulo": "¿Cuanto te costó hacer una canasta para el mes con la aplicación?",
+      "min": "1 estrella: Mucho, no entendia nada de la app",
+      "max": "5 estrellas: Nada, fue muy fácil y rápido"
+    },
+    {
+      "id": "HU-02",
+      "titulo": "¿Las respuestas a tus acciones en la app fueron las esperadas?",
+      "min": "1 estrella: No, hacia cosas que no entendía",
+      "max": "5 estrellas: Sí, todo fue como esperaba"
+    },
+    {
+      "id": "HU-03",
+      "titulo": "¿El cálculo y gestión de tu presupuesto/canasta funcionó como esperabas?",
+      "min": "1 estrella: Erróneo",
+      "max": "5 estrellas: Exacto y útil"
+    }
+  ],
+  "usabilidad": [
+    {
+      "id": "UX-01",
+      "titulo": "¿Cómo calificas la navegación y claridad visual de la interfaz gráfica?",
+      "min": "1 estrella: Confusa",
+      "max": "5 estrellas: Clara y atractiva"
+    },
+    {
+      "id": "UX-02",
+      "titulo": "¿Al abrir y cerrar la app, los productos agregados manualmente siguieron en la lista?",
+      "min": "1 estrella: Se perdieron los datos",
+      "max": "5 estrellas: Todo intacto"
+    },
+    {
+      "id": "VAL-01",
+      "titulo": "¿El contenido y utilidad de la aplicación cumplieron con tus expectativas?",
+      "min": "1 estrella: No fue relevante",
+      "max": "5 estrellas: Superó expectativas"
+    }
+  ]
+}
