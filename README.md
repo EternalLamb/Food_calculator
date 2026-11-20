@@ -9,7 +9,6 @@ La aplicación permite al usuario ingresar su sueldo o presupuesto disponible y 
 **Curso:** Programación de Dispositivos Móviles 2026-02  
 **Universidad:** Universidad de Talca  
 **Entrega:** Producto de Software 2 - Prototipo Funcional y Servicios del Móvil
->>>>>>> Stashed changes
 
 ---
 
